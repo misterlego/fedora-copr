@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: pingou/mkdocs-mike - Copr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #f3f4f6; /* text-gray-100 */
+        }
+        .active-project-tab {
+            border-color: #0ea5e9; /* border-sky-500 */
+            color: #0ea5e9; /* text-sky-500 */
+            background-color: rgba(31, 41, 55, 0.5); /* bg-gray-800 slightly lighter/transparent */
+        }
+        .project-tab-link {
+            transition: all 0.3s ease;
+        }
+        .glassmorphism-card {
+            background: rgba(31, 41, 55, 0.6); /* bg-gray-800 with opacity */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(55, 65, 81, 0.3); /* border-gray-700 with opacity */
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #6366f1); /* sky-400 to indigo-500 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        .code-block {
+            background-color: #0f172a; /* slate-900, darker than card */
+            border: 1px solid #334155; /* slate-700 */
+            color: #cbd5e1; /* slate-300 */
+        }
+        .header-search input[type="search"]::placeholder {
+            color: #9ca3af; /* placeholder-gray-400 */
+        }
+        .header-search input[type="search"]:focus {
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.5); /* sky-500 focus ring */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-gray-900/80 backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-bolt fa-2x"></i>
+                    <a href="index.html" class="text-2xl sm:text-3xl font-bold text-sky-400 hover:text-sky-300 transition-colors">Fedora Copr</a>
+                </div>
+                <button id="mobile-menu-button-global" class="lg:hidden text-gray-300 hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-md p-2">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+                <nav id="main-nav-global" class="hidden lg:flex lg:items-center lg:space-x-5">
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-box-open mr-1"></i> Packages</a>
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-project-diagram mr-1"></i> Projects</a>
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-users mr-1"></i> Users</a>
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-book mr-1"></i> Documentation</a>
+                    <form class="header-search ml-4 hidden lg:block">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <input type="search" placeholder="Search Copr..." class="block w-full bg-gray-700/50 border border-gray-600 text-gray-200 placeholder-gray-400 rounded-md py-2 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors">
+                        </div>
+                    </form>
+                    <div class="flex items-center space-x-3 ml-4">
+                         <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+                        <a href="#" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"><i class="fas fa-user-plus mr-1"></i> Register</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div id="mobile-menu-global" class="lg:hidden hidden bg-gray-800/95 backdrop-blur-sm">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <form class="header-search p-2">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="search" placeholder="Search Copr..." class="block w-full bg-gray-700 border border-gray-600 text-gray-200 placeholder-gray-400 rounded-md py-2 pl-10 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
+                    </div>
+                </form>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-box-open mr-2 w-5 text-center"></i>Packages</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-project-diagram mr-2 w-5 text-center"></i>Projects</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-users mr-2 w-5 text-center"></i>Users</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-book mr-2 w-5 text-center"></i>Documentation</a>
+            </div>
+            <div class="pt-4 pb-3 border-t border-gray-700">
+                <div class="flex items-center px-4 space-x-2">
+                    <a href="#" class="w-1/2 text-center text-gray-300 bg-gray-700 hover:bg-sky-500 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+                    <a href="#" class="w-1/2 text-center bg-sky-500 hover:bg-sky-600 text-white px-3 py-2 rounded-md text-base font-semibold shadow-md transition-colors"><i class="fas fa-user-plus mr-1"></i> Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <div class="mb-8">
+            <nav class="text-sm mb-3" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex space-x-2">
+                    <li class="flex items-center">
+                        <a href="index.html" class="text-gray-400 hover:text-sky-400 transition-colors"><i class="fas fa-home mr-1.5"></i>Home</a>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-gray-500 mx-2">/</span>
+                        <a href="#" class="text-gray-400 hover:text-sky-400 transition-colors">user</a>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-gray-500 mx-2">/</span>
+                        <span class="text-gray-200 font-medium">project-name-alpha</span>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-center space-x-3 mb-2 sm:mb-0">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-100">
+                        user / <span class="gradient-text">project-name-alpha</span>
+                    </h1>
+                    <div class="flex items-center space-x-1 text-gray-400">
+                        <button class="hover:text-green-400 p-1"><i class="fas fa-arrow-alt-circle-up fa-fw"></i></button>
+                        <span class="font-semibold text-sm">2</span>
+                        <button class="hover:text-red-400 p-1"><i class="fas fa-arrow-alt-circle-down fa-fw"></i></button>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500">Project ID: 178478</p>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <nav class="flex flex-wrap border-b border-gray-700" aria-label="Project Tabs">
+                <a href="#" class="project-tab-link active-project-tab whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base rounded-t-md">
+                    <i class="fas fa-tasks mr-2 opacity-80"></i>Overview
+                </a>
+                <a href="#" class="project-tab-link whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base text-gray-400 hover:text-sky-400 hover:border-sky-500/50 border-transparent rounded-t-md">
+                    <i class="fas fa-box mr-2 opacity-80"></i>Packages
+                </a>
+                <a href="#" class="project-tab-link whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base text-gray-400 hover:text-sky-400 hover:border-sky-500/50 border-transparent rounded-t-md">
+                    <i class="fas fa-cogs mr-2 opacity-80"></i>Builds
+                </a>
+                 <a href="#" class="project-tab-link whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base text-gray-400 hover:text-sky-400 hover:border-sky-500/50 border-transparent rounded-t-md">
+                    <i class="fas fa-puzzle-piece mr-2 opacity-80"></i>Modules
+                </a>
+                <a href="#" class="project-tab-link whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base text-gray-400 hover:text-sky-400 hover:border-sky-500/50 border-transparent rounded-t-md">
+                    <i class="fas fa-chart-bar mr-2 opacity-80"></i>Monitor
+                </a>
+            </nav>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <div class="lg:w-2/3 space-y-8">
+
+                <section class="glassmorphism-card p-6 rounded-xl shadow-xl">
+                    <h2 class="text-2xl font-semibold text-gray-100 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-sky-400 mr-3"></i>Description
+                    </h2>
+                    <p class="text-gray-300 leading-relaxed">
+                        This Copr project automates the building, testing, and distribution of project‑name‑alpha RPMs using Fedora’s Copr build infrastructure. By connecting your Git repository or submitting SRPMs, Copr performs reproducible builds on multiple Fedora and EPEL targets, generating a YUM/DNF repository for end users.
+                    </p>
+                </section>
+
+                <section class="glassmorphism-card p-6 rounded-xl shadow-xl">
+                    <h2 class="text-2xl font-semibold text-gray-100 mb-4 flex items-center">
+                        <i class="fas fa-download text-sky-400 mr-3"></i>Installation Instructions
+                    </h2>
+                    <p class="text-gray-300 leading-relaxed">
+                        Install it via the command.
+                    </p>
+                </section>                 
+                </section>
+
+                <section class="glassmorphism-card p-6 rounded-xl shadow-xl">
+                    <h2 class="text-2xl font-semibold text-gray-100 mb-6 flex items-center">
+                        <i class="fas fa-boxes-stacked text-sky-400 mr-3"></i>Active Releases
+                    </h2>
+
+                    <div class="hidden lg:grid lg:grid-cols-[2fr,2fr,3fr] gap-x-4 gap-y-2 items-center py-3 px-4 border-b border-gray-700/80 mb-4">
+                        <h3 class="text-sm font-semibold text-gray-400">Release</h3>
+                        <h3 class="text-sm font-semibold text-gray-400">Architectures</h3>
+                        <h3 class="text-sm font-semibold text-gray-400">Repo Download</h3>
+                    </div>
+
+                    <div class="space-y-4 lg:space-y-0">
+                        <div class="grid grid-cols-1 lg:grid-cols-[2fr,2fr,3fr] gap-x-4 gap-y-2 items-center py-3 px-4 lg:border-0 border rounded-lg border-gray-700/50 lg:rounded-none bg-gray-800/30 lg:bg-transparent lg:hover:bg-gray-800/30 transition-colors duration-200">
+                            <div class="flex items-center">
+                                <i class="fab fa-centos fa-fw mr-3 text-orange-400 text-xl"></i>
+                                <div>
+                                    <span class="font-medium text-sky-300">Centos-stream+epel-next 9</span>
+                                    <p class="text-xs text-gray-400 lg:hidden mt-1">Architectures: aarch64 (1)*, x86_64 (0)*</p>
+                                </div>
+                            </div>
+                            <div class="hidden lg:block text-sm text-gray-300">aarch64 (1)*, x86_64 (0)*</div>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 w-full mt-2 lg:mt-0">
+                                <button class="flex-grow bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium py-2 px-3 rounded-md shadow transition-colors flex items-center justify-center sm:justify-start mb-2 sm:mb-0">
+                                    <i class="fas fa-file-archive mr-1.5"></i> Centos-stream+epel-next 9 <span class="ml-1.5 text-xs bg-sky-700 px-1.5 py-0.5 rounded-full">0</span>
+                                </button>
+                                <button class="text-gray-500 hover:text-red-400 p-2 rounded-md transition-colors self-center sm:self-auto" aria-label="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-[2fr,2fr,3fr] gap-x-4 gap-y-2 items-center py-3 px-4 lg:border-0 border rounded-lg border-gray-700/50 lg:rounded-none bg-gray-800/30 lg:bg-transparent lg:hover:bg-gray-800/30 transition-colors duration-200 mt-3 lg:mt-0 lg:border-t lg:border-gray-700/50">
+                            <div class="flex items-center">
+                                <i class="fab fa-fedora fa-fw mr-3 text-blue-400 text-xl"></i>
+                                <div>
+                                    <span class="font-medium text-sky-300">Fedora 40</span>
+                                    <p class="text-xs text-gray-400 lg:hidden mt-1">Architectures: x86_64 (2)*</p>
+                                </div>
+                            </div>
+                            <div class="hidden lg:block text-sm text-gray-300">x86_64 (2)*</div>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 w-full mt-2 lg:mt-0">
+                                <button class="flex-grow bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium py-2 px-3 rounded-md shadow transition-colors flex items-center justify-center sm:justify-start mb-2 sm:mb-0">
+                                    <i class="fas fa-file-archive mr-1.5"></i> Fedora 40 <span class="ml-1.5 text-xs bg-sky-700 px-1.5 py-0.5 rounded-full">0</span>
+                                </button>
+                                <button class="text-gray-500 hover:text-red-400 p-2 rounded-md transition-colors self-center sm:self-auto" aria-label="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-[2fr,2fr,3fr] gap-x-4 gap-y-2 items-center py-3 px-4 lg:border-0 border rounded-lg border-gray-700/50 lg:rounded-none bg-gray-800/30 lg:bg-transparent lg:hover:bg-gray-800/30 transition-colors duration-200 mt-3 lg:mt-0 lg:border-t lg:border-gray-700/50">
+                            <div class="flex items-center">
+                                <i class="fas fa-box-archive fa-fw mr-3 text-purple-400 text-xl"></i>
+                                <div>
+                                    <span class="font-medium text-sky-300">EPEL 9</span>
+                                    <p class="text-xs text-gray-400 lg:hidden mt-1">Architectures: aarch64 (1)*, x86_64 (1)*</p>
+                                </div>
+                            </div>
+                            <div class="hidden lg:block text-sm text-gray-300">aarch64 (1)*, x86_64 (1)*</div>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 w-full mt-2 lg:mt-0">
+                                <button class="flex-grow bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium py-2 px-3 rounded-md shadow transition-colors flex items-center justify-center sm:justify-start mb-2 sm:mb-0">
+                                    <i class="fas fa-file-archive mr-1.5"></i> EPEL 9 <span class="ml-1.5 text-xs bg-sky-700 px-1.5 py-0.5 rounded-full">0</span>
+                                </button>
+                                <button class="text-gray-500 hover:text-red-400 p-2 rounded-md transition-colors self-center sm:self-auto" aria-label="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        </div>
+                    <p class="text-xs text-gray-500 mt-6">* Total number of downloaded packages.</p>
+                </section>
+
+                <div class="mt-8 text-center lg:text-left">
+                     <a href="#" class="text-sky-400 hover:text-sky-300 font-medium group transition-colors text-lg">
+                        <i class="fas fa-comments mr-2"></i>Start Discussion <span class="text-gray-500">(0 replies)</span>
+                        <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lg:w-1/3 space-y-8">
+                <div class="sticky top-24">
+                    <section class="glassmorphism-card p-6 rounded-xl shadow-xl">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-4 flex items-center">
+                            <i class="fas fa-history text-sky-400 mr-3"></i>Last Build
+                        </h2>
+                        <div class="space-y-2 text-sm">
+                            <p class="text-gray-300 font-medium">python-verspec</p>
+                            <p class="text-gray-400">Build: <span class="text-gray-200">9039786</span></p>
+                            <p class="text-gray-400">State: <span class="bg-green-600/30 text-green-300 px-2 py-0.5 rounded-full font-semibold border border-green-500">Succeeded</span></p>
+                            <p class="text-gray-400">Finished: <span class="text-gray-200">10 hours ago</span></p>
+                        </div>
+                    </section>
+
+                    <section class="glassmorphism-card p-6 rounded-xl shadow-xl mt-8">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-4 flex items-center">
+                            <i class="fas fa-terminal text-sky-400 mr-3"></i>Quick Enable
+                        </h2>
+                        <div class="code-block p-4 rounded-md text-sm overflow-x-auto relative">
+                            <button class="copy-btn absolute top-2 right-2 text-gray-400 hover:text-sky-400 transition-colors" title="Copy to clipboard">
+                                <i class="far fa-copy"></i>
+                            </button>
+                            <code class="code-to-copy">#&gt; dnf copr enable user/project-name-alpha</code>
+                        </div>
+                        <a href="#" class="text-xs text-sky-400 hover:underline mt-3 inline-block"><i class="fas fa-info-circle mr-1"></i>More info about enabling Copr repositories</a>
+                    </section>
+
+                    <section class="glassmorphism-card p-6 rounded-xl shadow-xl mt-8">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-4 flex items-center">
+                            <i class="fas fa-cog text-sky-400 mr-3"></i>Other Actions
+                        </h2>
+                        <a href="#" class="text-red-400 hover:text-red-300 font-medium flex items-center group transition-colors">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>Report Abuse
+                            <i class="fas fa-arrow-right ml-auto opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all"></i>
+                        </a>
+                    </section>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+<footer class="bg-gray-900 border-t border-gray-700/50 pt-12 pb-8 mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-info-circle mr-2"></i>About Copr</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">What is Copr?</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Features Overview</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Sponsors</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-tools mr-2"></i>Resources</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Full Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">API Reference</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Client CLI Tool</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Report a Bug</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-users mr-2"></i>Community</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Fedora Project</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Mailing List</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">IRC (#fedora-copr)</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">GitHub</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-shield-alt mr-2"></i>Legal</h5>
+                     <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; <span id="currentYear"></span> Fedora Project. Copr is a community-driven service.</p>
+                <p>[This is just a static demo page, I have no connection with Fedora or Fedora Copr orgs, It's just my personal project]</p>
+                 <div class="mt-4">
+                    <a href="#" class="text-gray-400 hover:text-sky-400 mx-2"><i class="fab fa-github fa-lg"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-sky-400 mx-2"><i class="fab fa-discourse fa-lg"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-sky-400 mx-2"><i class="fab fa-mastodon fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global Mobile menu toggle
+        const menuButtonGlobal = document.getElementById('mobile-menu-button-global');
+        const mobileMenuGlobal = document.getElementById('mobile-menu-global');
+
+        if(menuButtonGlobal && mobileMenuGlobal) {
+            menuButtonGlobal.addEventListener('click', () => {
+                mobileMenuGlobal.classList.toggle('hidden');
+                const icon = menuButtonGlobal.querySelector('i');
+                if (mobileMenuGlobal.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+        }
+
+        const currentYearElem = document.getElementById('currentYear');
+        if(currentYearElem) {
+            currentYearElem.textContent = new Date().getFullYear();
+        }
+
+        // Copy to clipboard for code blocks
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const codeElement = button.parentElement.querySelector('.code-to-copy');
+                if (codeElement) {
+                    navigator.clipboard.writeText(codeElement.innerText).then(() => {
+                        button.innerHTML = '<i class="fas fa-check text-green-400"></i>';
+                        setTimeout(() => {
+                            button.innerHTML = '<i class="far fa-copy"></i>';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
