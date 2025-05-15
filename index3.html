@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copr - Build Service | Fedora</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #f3f4f6; /* text-gray-100 */
+        }
+        .active-tab {
+            border-color: #0ea5e9; /* border-sky-500 */
+            color: #0ea5e9; /* text-sky-500 */
+            background-color: #1f2937; /* bg-gray-800 slightly lighter for active tab */
+        }
+        .tab-link {
+            transition: all 0.3s ease;
+        }
+        .glassmorphism-card {
+            background: rgba(31, 41, 55, 0.6); /* bg-gray-800 with opacity */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(55, 65, 81, 0.3); /* border-gray-700 with opacity */
+        }
+        .hero-search input[type="search"]::placeholder {
+            color: #9ca3af; /* placeholder-gray-400 */
+        }
+        .hero-search input[type="search"]:focus {
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.5); /* sky-500 focus ring */
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #6366f1); /* sky-400 to indigo-500 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        /* Custom animation for a slower spin */
+        @keyframes spin-slow {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 10s linear infinite;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-gray-900/80 backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center space-x-3">
+                    <img src="https://copr.fedorainfracloud.org/static/copr.png" alt="Copr Logo" class="h-10 w-10 sm:h-12 sm:w-12">
+                    <a href="#" class="text-2xl sm:text-3xl font-bold text-sky-400 hover:text-sky-300 transition-colors">Copr</a>
+                </div>
+
+                <button id="mobile-menu-button" class="md:hidden text-gray-300 hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-md p-2">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+
+                <nav id="main-nav" class="hidden md:flex md:items-center md:space-x-5">
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-box-open mr-1"></i> Packages</a>
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-project-diagram mr-1"></i> Projects</a>
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-users mr-1"></i> Users</a>
+                    <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-book mr-1"></i> Documentation</a>
+                    <div class="hidden lg:flex items-center space-x-3 ml-4">
+                         <a href="#" class="text-gray-300 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+                        <a href="#" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"><i class="fas fa-user-plus mr-1"></i> Register</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-gray-800/95 backdrop-blur-sm">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-box-open mr-2"></i>Packages</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-project-diagram mr-2"></i>Projects</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-users mr-2"></i>Users</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-sky-400 px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-book mr-2"></i>Documentation</a>
+            </div>
+            <div class="pt-4 pb-3 border-t border-gray-700">
+                <div class="flex items-center px-5 space-x-2">
+                    <a href="#" class="w-1/2 text-center text-gray-300 bg-gray-700 hover:bg-sky-500 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-colors"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+                    <a href="#" class="w-1/2 text-center bg-sky-500 hover:bg-sky-600 text-white px-3 py-2 rounded-md text-base font-semibold shadow-md transition-colors"><i class="fas fa-user-plus mr-1"></i> Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section class="hero-search text-center py-16 sm:py-24 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 shadow-2xl mb-12 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(14, 165, 233, 0.2)" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#smallGrid)" /></svg>
+            </div>
+            <div class="relative z-10">
+                <i class="fas fa-cogs text-sky-400 text-5xl sm:text-6xl mb-6 animate-spin-slow"></i>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6">
+                    Find <span class="gradient-text">Your Packages</span> & Projects
+                </h1>
+                <p class="text-lg sm:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    Discover thousands of community-built RPMs. Copr simplifies building and distributing your software for Fedora.
+                </p>
+                <form class="max-w-xl mx-auto">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-6 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400 text-lg"></i>
+                        </div>
+                        <input type="search" placeholder="Search for 'kernel-custom' or 'my-cool-app'..." class="w-full py-4 sm:py-5 pl-12 sm:pl-16 pr-4 text-base sm:text-lg text-gray-100 bg-gray-700/70 border border-gray-600 rounded-full focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:outline-none transition-all duration-300 placeholder-gray-500" />
+                        <button type="submit" class="absolute inset-y-0 right-0 flex items-center px-4 sm:px-6 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-r-full text-sm sm:text-base transition-colors">
+                            <span class="hidden sm:inline">Search</span>
+                            <i class="fas fa-arrow-right sm:hidden"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="glassmorphism-card p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                <div class="flex items-center text-sky-400 mb-3">
+                    <i class="fas fa-cubes fa-2x mr-3"></i>
+                    <h3 class="text-xl font-semibold text-gray-200">Total Projects</h3>
+                </div>
+                <p class="text-4xl font-bold gradient-text">15,700+</p>
+                <p class="text-sm text-gray-400 mt-1">Growing daily</p>
+            </div>
+            <div class="glassmorphism-card p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                <div class="flex items-center text-teal-400 mb-3">
+                    <i class="fas fa-archive fa-2x mr-3"></i>
+                    <h3 class="text-xl font-semibold text-gray-200">Available Packages</h3>
+                </div>
+                <p class="text-4xl font-bold" style="background: linear-gradient(to right, #2dd4bf, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">75,000+</p>
+                <p class="text-sm text-gray-400 mt-1">Across all projects</p>
+            </div>
+            <div class="glassmorphism-card p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                <div class="flex items-center text-indigo-400 mb-3">
+                    <i class="fas fa-users-cog fa-2x mr-3"></i>
+                    <h3 class="text-xl font-semibold text-gray-200">Active Users</h3>
+                </div>
+                <p class="text-4xl font-bold" style="background: linear-gradient(to right, #818cf8, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">6,500+</p>
+                <p class="text-sm text-gray-400 mt-1">Contributing & building</p>
+            </div>
+            <div class="glassmorphism-card p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300 flex flex-col">
+                <h3 class="text-xl font-semibold text-gray-200 mb-3 flex items-center">
+                    <i class="fas fa-chart-line text-pink-400 mr-2"></i>Builds This Month
+                </h3>
+                <div class="relative h-40 sm:h-44 flex-grow">
+                    <canvas id="buildsChart"></canvas>
+                </div>
+                <p class="text-sm text-gray-400 mt-3 text-center">Illustrative data</p>
+            </div>
+        </section>
+
+        <section class="glassmorphism-card p-4 sm:p-6 rounded-xl shadow-xl mb-12">
+            <div class="border-b border-gray-700 mb-2 sm:mb-4">
+                <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+                    <button data-tab="recent-builds" class="tab-link active-tab whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base rounded-t-md">
+                        <i class="fas fa-history mr-2 opacity-80"></i>Recent Builds
+                    </button>
+                    <button data-tab="popular-projects" class="tab-link whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base text-gray-400 hover:text-sky-400 hover:border-sky-500/50 border-transparent rounded-t-md">
+                        <i class="fas fa-fire mr-2 opacity-80"></i>Popular Projects
+                    </button>
+                    <button data-tab="new-projects" class="tab-link whitespace-nowrap py-3 px-4 sm:py-4 sm:px-5 border-b-2 font-semibold text-sm sm:text-base text-gray-400 hover:text-sky-400 hover:border-sky-500/50 border-transparent rounded-t-md">
+                        <i class="fas fa-sparkles mr-2 opacity-80"></i>New Projects
+                    </button>
+                </nav>
+            </div>
+
+            <div id="recent-builds" class="tab-content py-4">
+                <div class="bg-gray-800/70 p-4 rounded-lg mb-4 shadow-md hover:shadow-sky-500/20 hover:shadow-lg transition-all duration-300 ease-in-out border border-transparent hover:border-sky-600">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div>
+                            <a href="#" class="text-lg font-semibold text-sky-400 hover:underline flex items-center"><i class="fas fa-folder-open mr-2 text-sky-500"></i>user/project-name-alpha</a>
+                            <p class="text-xs text-gray-400 ml-6 sm:ml-0">Last build: <span class="font-medium text-gray-300">package-1.2.0-3.fc40</span></p>
+                        </div>
+                        <div class="mt-2 sm:mt-0 text-xs flex items-center space-x-3">
+                            <span class="inline-flex items-center bg-green-600/30 text-green-300 px-2.5 py-1 rounded-full font-semibold border border-green-500">
+                                <i class="fas fa-check-circle mr-1.5"></i>Succeeded
+                            </span>
+                            <span class="text-gray-500"><i class="far fa-clock mr-1"></i>30 mins ago</span>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-sm text-gray-300 leading-relaxed">Updated dependencies and fixed minor bugs. This build includes the latest features for enhanced performance.</p>
+                </div>
+                <div class="bg-gray-800/70 p-4 rounded-lg mb-4 shadow-md hover:shadow-red-500/20 hover:shadow-lg transition-all duration-300 ease-in-out border border-transparent hover:border-red-600">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div>
+                            <a href="#" class="text-lg font-semibold text-sky-400 hover:underline flex items-center"><i class="fas fa-folder-open mr-2 text-sky-500"></i>another-user/critical-tool</a>
+                            <p class="text-xs text-gray-400 ml-6 sm:ml-0">Last build: <span class="font-medium text-gray-300">tool-0.9.5-1.fc39</span></p>
+                        </div>
+                        <div class="mt-2 sm:mt-0 text-xs flex items-center space-x-3">
+                            <span class="inline-flex items-center bg-red-600/30 text-red-300 px-2.5 py-1 rounded-full font-semibold border border-red-500">
+                                <i class="fas fa-times-circle mr-1.5"></i>Failed
+                            </span>
+                            <span class="text-gray-500"><i class="far fa-clock mr-1"></i>1 hour ago</span>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-sm text-gray-300 leading-relaxed">Build failed due to a missing dependency. Investigating the issue now.</p>
+                </div>
+                <div class="text-center mt-8">
+                    <a href="#" class="text-sky-400 hover:text-sky-300 font-medium group transition-colors">
+                        View all recent builds <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="popular-projects" class="tab-content hidden py-4">
+                 <h2 class="text-2xl font-semibold text-gray-200 mb-4 sr-only">Popular Projects</h2>
+                <div class="bg-gray-800/70 p-4 rounded-lg mb-4 shadow-md hover:shadow-indigo-500/20 hover:shadow-lg transition-all duration-300 ease-in-out border border-transparent hover:border-indigo-600">
+                    <a href="#" class="text-lg font-semibold text-sky-400 hover:underline flex items-center"><i class="fas fa-star mr-2 text-yellow-400"></i>awesome-dev/top-rated-utility</a>
+                    <p class="text-xs text-gray-400">Maintained by: <span class="font-medium text-gray-300">Awesome Developer</span></p>
+                    <p class="mt-3 text-sm text-gray-300">The most starred utility this month, providing essential functions for sysadmins.</p>
+                    <div class="mt-3 text-xs text-gray-400 flex items-center space-x-4">
+                        <span><i class="fas fa-download mr-1 text-sky-400"></i> 15.2k Installs</span>
+                        <span><i class="fas fa-code-branch mr-1 text-gray-500"></i> 870 Forks</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="new-projects" class="tab-content hidden py-4">
+                <h2 class="text-2xl font-semibold text-gray-200 mb-4 sr-only">New Projects</h2>
+                <div class="bg-gray-800/70 p-4 rounded-lg mb-4 shadow-md hover:shadow-purple-500/20 hover:shadow-lg transition-all duration-300 ease-in-out border border-transparent hover:border-purple-600">
+                     <a href="#" class="text-lg font-semibold text-sky-400 hover:underline flex items-center"><i class="fas fa-rocket mr-2 text-purple-400"></i>newbie-coder/my-first-copr</a>
+                    <p class="text-xs text-gray-400">Created: <span class="font-medium text-gray-300">May 15, 2025</span></p>
+                    <p class="mt-3 text-sm text-gray-300">Just launched! Exploring Copr's capabilities with this initial project for a small CLI tool.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-100 flex items-center">
+                    <i class="fas fa-newspaper text-sky-400 mr-3"></i>Latest News & Updates
+                </h2>
+                <a href="#" class="text-sky-400 hover:text-sky-300 font-medium group transition-colors">
+                    View All Posts <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glassmorphism-card p-6 rounded-xl shadow-lg flex flex-col h-full transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl font-semibold text-sky-400 mb-2 hover:text-sky-300 transition-colors"><a href="#">New Features in Copr v1.90</a></h3>
+                    <p class="text-xs text-gray-500 mb-3"><i class="far fa-calendar-alt mr-1.5"></i>May 12, 2025</p>
+                    <p class="text-sm text-gray-300 leading-relaxed mb-4 flex-grow">
+                        Discover the latest enhancements including improved build times, new chroots, and UI updates in our newest release...
+                    </p>
+                    <a href="#" class="text-sky-400 hover:text-sky-300 text-sm font-semibold group mt-auto">
+                        Read More <i class="fas fa-long-arrow-alt-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                <div class="glassmorphism-card p-6 rounded-xl shadow-lg flex flex-col h-full transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl font-semibold text-sky-400 mb-2 hover:text-sky-300 transition-colors"><a href="#">Community Spotlight: Amazing Project X</a></h3>
+                     <p class="text-xs text-gray-500 mb-3"><i class="far fa-calendar-alt mr-1.5"></i>May 05, 2025</p>
+                    <p class="text-sm text-gray-300 leading-relaxed mb-4 flex-grow">
+                        This month, we highlight an innovative project utilizing Copr for continuous delivery of their open-source tools...
+                    </p>
+                    <a href="#" class="text-sky-400 hover:text-sky-300 text-sm font-semibold group mt-auto">
+                        Read More <i class="fas fa-long-arrow-alt-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                <div class="glassmorphism-card p-6 rounded-xl shadow-lg flex flex-col h-full transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl font-semibold text-sky-400 mb-2 hover:text-sky-300 transition-colors"><a href="#">Understanding RPM Packaging Basics</a></h3>
+                     <p class="text-xs text-gray-500 mb-3"><i class="far fa-calendar-alt mr-1.5"></i>April 28, 2025</p>
+                    <p class="text-sm text-gray-300 leading-relaxed mb-4 flex-grow">
+                        New to RPMs? Our latest guide breaks down the fundamentals to get you started with packaging your software for Fedora...
+                    </p>
+                    <a href="#" class="text-sky-400 hover:text-sky-300 text-sm font-semibold group mt-auto">
+                        Read More <i class="fas fa-long-arrow-alt-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                <div class="glassmorphism-card p-6 rounded-xl shadow-lg flex flex-col h-full transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-xl font-semibold text-sky-400 mb-2 hover:text-sky-300 transition-colors"><a href="#">Copr Infrastructure Maintenance Update</a></h3>
+                    <p class="text-xs text-gray-500 mb-3"><i class="far fa-calendar-alt mr-1.5"></i>April 19, 2025</p>
+                    <p class="text-sm text-gray-300 leading-relaxed mb-4 flex-grow">
+                        Scheduled maintenance is planned for next weekend. Read on for details on expected downtime and service impact...
+                    </p>
+                    <a href="#" class="text-sky-400 hover:text-sky-300 text-sm font-semibold group mt-auto">
+                        Read More <i class="fas fa-long-arrow-alt-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center py-16">
+            <i class="fas fa-rocket text-sky-400 text-4xl mb-4"></i>
+            <h2 class="text-3xl sm:text-4xl font-bold mb-3 text-gray-100">Ready to Launch Your Code?</h2>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto text-lg">Join the Fedora community on Copr. Build, share, and manage your RPM packages with ease.</p>
+            <a href="#" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white py-3 px-8 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out inline-flex items-center">
+                <i class="fas fa-plus-circle mr-2"></i>Create Your First Project
+            </a>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-700/50 pt-12 pb-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-info-circle mr-2"></i>About Copr</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">What is Copr?</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Features Overview</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Sponsors</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-tools mr-2"></i>Resources</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Full Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">API Reference</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Client CLI Tool</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Report a Bug</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-users mr-2"></i>Community</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Fedora Project</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Mailing List</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">IRC (#fedora-copr)</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">GitHub</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-lg mb-3 text-sky-400 flex items-center"><i class="fas fa-shield-alt mr-2"></i>Legal</h5>
+                     <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-sky-300 transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; <span id="currentYear"></span> Fedora Project. Copr is a community-driven service.</p>
+                <p>Proudly sponsored by Red Hat and other community partners.</p>
+                 <div class="mt-4">
+                    <a href="#" class="text-gray-400 hover:text-sky-400 mx-2"><i class="fab fa-github fa-lg"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-sky-400 mx-2"><i class="fab fa-discourse fa-lg"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-sky-400 mx-2"><i class="fab fa-mastodon fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuButton.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+
+        // Tab functionality
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetTab = link.dataset.tab;
+
+                tabLinks.forEach(l => {
+                    l.classList.remove('active-tab');
+                    l.classList.add('text-gray-400', 'hover:text-sky-400', 'hover:border-sky-500/50', 'border-transparent');
+                });
+                tabContents.forEach(c => c.classList.add('hidden'));
+
+                link.classList.add('active-tab');
+                link.classList.remove('text-gray-400', 'hover:text-sky-400', 'hover:border-sky-500/50', 'border-transparent');
+                const targetContent = document.getElementById(targetTab);
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                }
+            });
+        });
+
+        if (tabLinks.length > 0 && tabContents.length > 0) {
+            tabLinks[0].classList.add('active-tab');
+            tabLinks[0].classList.remove('text-gray-400', 'hover:text-sky-400', 'hover:border-sky-500/50', 'border-transparent');
+            const firstTabContent = document.getElementById(tabLinks[0].dataset.tab);
+            if (firstTabContent) {
+                 firstTabContent.classList.remove('hidden');
+            }
+        }
+
+        // Chart.js Example for Builds
+        const ctx = document.getElementById('buildsChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Builds',
+                        data: [650, 720, 800, 750, 900, 850],
+                        borderColor: '#ec4899', // pink-500
+                        backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#ec4899',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#ec4899'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(100, 116, 139, 0.2)'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        },
+                        x: {
+                             grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
